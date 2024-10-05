@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
@@ -16,11 +18,29 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    public User registerUser(@Valid User user, String confirmPassword) {
+        if (!user.getPassword().equals(confirmPassword)) {
+            throw new IllegalArgumentException("Пароли не совпадают");
+        }
 
-    public User registerUser(@Valid User user) {
+        if (userRepository.findByPassportNumber(user.getPassportNumber()) != null) {
+            throw new IllegalArgumentException("Номер паспорта уже существует");
+        }
+        String readerTicketNumber;
+        do {
+            readerTicketNumber = generateReaderTicketNumber();
+        } while (userRepository.findByReaderTicketNumber(readerTicketNumber) != null);
+
+        user.setReaderTicketNumber(readerTicketNumber);
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
         return userRepository.save(user);
+    }
+
+    private String generateReaderTicketNumber() {
+        return UUID.randomUUID().toString();
     }
 
     public User findByPassportNumber(String passportNumber) {
@@ -40,6 +60,15 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.getReferenceById(id);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с ID " + id + " не найден"));
+    }
+
+    public User updateUser(Long id, User user) {
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("Пользователь с ID " + id + " не найден");
+        }
+        user.setId(id);
+        return userRepository.save(user);
     }
 }
