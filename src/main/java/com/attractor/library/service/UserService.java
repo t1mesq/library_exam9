@@ -1,7 +1,11 @@
 package com.attractor.library.service;
 
 import com.attractor.library.dto.UserDTO;
+import com.attractor.library.entity.Authority;
 import com.attractor.library.entity.User;
+import com.attractor.library.entity.UserAuthority;
+import com.attractor.library.repository.AuthorityRepository;
+import com.attractor.library.repository.UserAuthoritiesRepository;
 import com.attractor.library.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +30,13 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Transactional
-    public User registerUser(UserDTO userDTO, String confirmPassword) {
-        if (!userDTO.getPassword().equals(confirmPassword)) {
-            throw new IllegalArgumentException("Пароли не совпадают");
-        }
-        if (userRepository.findByPassportNumber(userDTO.getPassportNumber()).isPresent()) {
-            throw new IllegalArgumentException("Пользователь с таким номером паспорта уже существует");
-        }
-        if (userRepository.findByReaderTicketNumber(userDTO.getReaderTicketNumber()).isPresent()) {
-            throw new IllegalArgumentException("Пользователь с таким читательским билетом уже существует");
-        }
+    @Autowired
+    private AuthorityRepository authorityRepository;
 
+    @Autowired
+    private UserAuthoritiesRepository userAuthoritiesRepository;
+
+    public User registerUser(UserDTO userDTO, String password) {
         User user = new User();
         user.setSurname(userDTO.getSurname());
         user.setName(userDTO.getName());
@@ -45,15 +44,13 @@ public class UserService {
         user.setAddress(userDTO.getAddress());
         user.setPassportNumber(userDTO.getPassportNumber());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setReaderTicketNumber(userDTO.getReaderTicketNumber());
-
-        logger.info("Попытка сохранить пользователя: {}", user);
-
-        User savedUser = userRepository.save(user);
-
-        logger.info("Пользователь успешно сохранен: {}", savedUser);
-
-        return savedUser;
+        userRepository.save(user);
+        Authority defaultAuthority = authorityRepository.findByName("USER");
+        UserAuthority userAuthority = new UserAuthority();
+        userAuthority.setUserId(user.getId());
+        userAuthority.setAuthorityId(defaultAuthority.getId());
+        userAuthoritiesRepository.save(userAuthority);
+        return user;
     }
 
 

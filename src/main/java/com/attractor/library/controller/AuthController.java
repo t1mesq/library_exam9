@@ -40,6 +40,7 @@ public class AuthController {
             model.addAttribute("userDTO", userDTO);
             return "registration";
         }
+
         userService.registerUser(userDTO, userDTO.getPassword());
         logger.info("User registered successfully: {}", userDTO.getReaderTicketNumber());
         return "redirect:/registration-success";

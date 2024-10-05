@@ -35,7 +35,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final String DEFAULT = "DEFAULT";
+    private final String USER = "USER";
     private final String ADMIN = "ADMIN";
 
     @Bean
@@ -68,7 +68,7 @@ public class SecurityConfig {
             public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
                 Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
                 for (GrantedAuthority authority : authorities) {
-                    if (authority.getAuthority().equals(DEFAULT)) {
+                    if (authority.getAuthority().equals(USER)) {
                         response.sendRedirect("/account");
                         return;
                     }
