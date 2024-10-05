@@ -35,4 +35,9 @@ public class User {
 
     @NotBlank(message = "Пароль не может быть пустым")
     private String password;
+
+    @NotBlank
+    private String role;
+
+    private boolean enabled = true;
 }
