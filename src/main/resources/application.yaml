@@ -2,19 +2,51 @@ server:
   port: 8089
 
 spring:
+  session:
+    jdbc:
+      initialize-schema: always
   application:
     name: library
-  h2:
-    console:
-      enabled: true
+  mvc:
+    static-path-pattern: /static/**
+    log-request-details: false
   datasource:
     url: jdbc:h2:./db/library;AUTO_SERVER=true
-    driver-class-name: org.h2.Driver
     username: sa
     password:
+    driver-class-name: org.h2.Driver
   liquibase:
     change-log: classpath:/db/changelog/master.xml
     enabled: true
+  h2:
+    console:
+      enabled: true
+  freemarker:
+    expose-session-attributes: true
+    template-loader-path: classpath:/templates/
+    suffix: .ftlh
+    charset: UTF-8
+    expose-request-attributes: true
+    expose-spring-macro-helpers: true
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+    show-sql: true
+
+logging:
+  level:
+    root: info
+    org:
+      springframework:
+        security: info
+      hibernate:
+        #        stat: debug
+        type: info
+    sql: info
+    web: info
+  file:
+    name: logs/spring.log
