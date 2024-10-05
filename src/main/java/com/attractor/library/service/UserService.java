@@ -31,6 +31,12 @@ public class UserService {
         if (!userDTO.getPassword().equals(confirmPassword)) {
             throw new IllegalArgumentException("Пароли не совпадают");
         }
+        if (userRepository.findByPassportNumber(userDTO.getPassportNumber()).isPresent()) {
+            throw new IllegalArgumentException("Пользователь с таким номером паспорта уже существует");
+        }
+        if (userRepository.findByReaderTicketNumber(userDTO.getReaderTicketNumber()).isPresent()) {
+            throw new IllegalArgumentException("Пользователь с таким читательским билетом уже существует");
+        }
 
         User user = new User();
         user.setSurname(userDTO.getSurname());

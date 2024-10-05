@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.OneToMany;
+import com.attractor.library.entity.BookRequest;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -61,6 +64,9 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
     private Set<Authority> authorities = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<BookRequest> bookRequests;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

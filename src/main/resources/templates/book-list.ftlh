@@ -34,7 +34,7 @@
         <#list books as book>
             <div class="col">
                 <div class="card h-100">
-                    <img src="${book.previewImage}" class="card-img-top" alt="${book.title}">
+                    <img src="${book.image}" class="card-img-top" alt="${book.title}">
                     <div class="card-body">
                         <h5 class="card-title">${book.title}</h5>
                         <p class="card-text">Автор: ${book.author}</p>
@@ -72,4 +72,3 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
