@@ -53,6 +53,11 @@ databaseChangeLog:
                   defaultValueBoolean: true
                   constraints:
                     nullable: false
+              - column:
+                  name: authority_id
+                  type: bigint
+                  constraints:
+                    nullable: false
 
 
   - changeSet:

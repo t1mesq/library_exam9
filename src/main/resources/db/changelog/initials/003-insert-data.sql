@@ -1,26 +1,24 @@
+INSERT INTO authorities (name) VALUES ('USER');
+INSERT INTO authorities (name) VALUES ('ADMIN');
 
-INSERT INTO authorities (name) VALUES
-                                   ('USER'),
-                                   ('ADMIN');
 
-INSERT INTO categories (name) VALUES
-                                  ('Фантастика'),
-                                  ('Роман'),
-                                  ('Детектив'),
-                                  ('Научная литература');
+INSERT INTO users (surname, name, patronymic, address, passport_number, password, reader_ticket_number, enabled, authority_id)
+VALUES
+    ('Иванов', 'Иван', 'Иванович', 'Москва, ул. Пушкина, д. 1', '1234567890', '$2a$12$OUfWztvM.3gK4zfdXPacs.3SXx7R09qACsKGqeNkFNVIix7sgtU/u', 'RTN123456', true, 1), -- USER
+    ('Петров', 'Петр', 'Петрович', 'Санкт-Петербург, ул. Ленина, д. 2', '0987654321', '$2a$12$sk2Z8ogmhD97GJPpBvctYu7sHgIIcSINd.uwpFBwPwju7VFxDJTVW', 'RTN654321', true, 1), -- USER
+    ('Сидоров', 'Сидор', 'Сидорович', 'Екатеринбург, ул. Чехова, д. 3', '2345678901', '$2a$12$r9cPB5qmTsJMky0bEmFN5.9YKtAggdV689W90JN7ja6jNBnkOFj1G', 'RTN987654', true, 2); -- ADMIN
 
-INSERT INTO users (surname, name, patronymic, address, passport_number, password, reader_ticket_number, enabled) VALUES
-                                                                                                                     ('Иванов', 'Иван', 'Иванович', 'г. Москва, ул. Ленина, д. 1', '123456', '$2a$12$qEPFg9WppuycYRdsIsu58O//EfHN8v6XUikl7.9c2rxCsF8Xf4Fuq', 'RT123456', true),
-                                                                                                                     ('Петров', 'Петр', 'Петрович', 'г. Санкт-Петербург, ул. Невского, д. 2', '654321', '$2a$12$nQjGijtgYxopmSKHMhY6Ruyz2xCDdH8v1rGCM3PVTZvpA3vUyWxbC', 'RT654321', true),
-                                                                                                                     ('Сидоров', 'Сидор', 'Сидорович', 'г. Казань, ул. Мира, д. 3', '111222', '$2a$12$waP6bmq6YWh4AbjkDonkge6dEpi0pq/Tw5b/3dwDY7jrDFcH1EZ3a', 'RT111222', true);
+INSERT INTO categories (name) VALUES ('Фантастика');
+INSERT INTO categories (name) VALUES ('Научная литература');
+INSERT INTO categories (name) VALUES ('Детская литература');
 
 INSERT INTO books (title, author, category_id, image, available) VALUES
-                                                                     ('1984', 'Джордж Оруэлл', 1, '1984.jpg', true),
-                                                                     ('Мастер и Маргарита', 'Михаил Булгаков', 2, 'master_and_margarita.jpg', true),
-                                                                     ('Убийство в Восточном экспрессе', 'Агата Кристи', 3, 'murder_on_the_orient_express.jpg', true),
-                                                                     ('Краткая история времени', 'Стивен Хокинг', 4, 'brief_history_of_time.jpg', true);
+                                                                     ('Тайна третьей планеты', 'Кира Булычёв', 1, 'image1.jpg', true),
+                                                                     ('1984', 'Джордж Оруэлл', 1, 'image2.jpg', true),
+                                                                     ('Краткая история времени', 'Стивен Хокинг', 2, 'image3.jpg', true),
+                                                                     ('Волшебник Изумрудного города', 'Александр Волков', 3, 'image4.jpg', true);
 
-INSERT INTO book_requests (reader_ticket_number, book_id, user_id, return_date) VALUES
-                                                                                    ('RT123456', 1, 1, '2024-10-10'),
-                                                                                    ('RT654321', 2, 2, '2024-10-15'),
-                                                                                    ('RT111222', 3, 3, '2024-10-20');
+INSERT INTO user_authorities (user_id, authority_id) VALUES
+                                                         (1, 1),
+                                                         (2, 1),
+                                                         (3, 2);
