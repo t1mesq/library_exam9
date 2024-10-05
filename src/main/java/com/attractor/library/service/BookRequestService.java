@@ -71,9 +71,9 @@ public class BookRequestService {
         return bookRequestRepository.save(bookRequest);
     }
 
-    public BookRequest getRequestById(Long id) {
-        return bookRequestRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Заявка с ID " + id + " не найдена"));
+    public BookRequestDTO getRequestById(Long id) {
+        BookRequest bookRequest = bookRequestRepository.findById(id).orElse(null);
+        return convertToDTO(bookRequest);
     }
 }
 
