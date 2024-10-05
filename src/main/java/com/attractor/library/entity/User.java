@@ -6,6 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,8 +41,16 @@ public class User {
     @NotBlank(message = "Пароль не может быть пустым")
     private String password;
 
+    @NotBlank(message = "Номер читательского билета не может быть пустым")
+    @Column(unique = true)
+    private String readerTicketNumber;
+
     @NotBlank
     private String role;
 
     private boolean enabled = true;
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role));
+    }
 }
