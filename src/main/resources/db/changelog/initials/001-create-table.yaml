@@ -1,0 +1,200 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: kara
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: surname
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: patronymic
+                  type: varchar(255)
+              - column:
+                  name: address
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: passport_number
+                  type: varchar(12)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reader_ticket_number
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+
+
+  - changeSet:
+      id: 2
+      author: kara
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+
+  - changeSet:
+      id: 3
+      author: kara
+      changes:
+        - createTable:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image
+                  type: varchar(255)
+              - column:
+                  name: available
+                  type: boolean
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 4
+      author: kara
+      changes:
+        - createTable:
+            tableName: authorities
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+
+  - changeSet:
+      id: 5
+      author: kara
+      changes:
+        - createTable:
+            tableName: book_requests
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: reader_ticket_number
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: book_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: return_date
+                  type: date
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 6
+      author: kara
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: book_requests
+            baseColumnNames: book_id
+            referencedTableName: books
+            referencedColumnNames: id
+            constraintName: fk_book_requests_book
+
+  - changeSet:
+      id: 7
+      author: kara
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: book_requests
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_book_requests_user
+
+  - changeSet:
+      id: 8
+      author: kara
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: books
+            baseColumnNames: category_id
+            referencedTableName: categories
+            referencedColumnNames: id
+            constraintName: fk_books_category

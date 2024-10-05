@@ -27,7 +27,16 @@ public class BookRequest {
     @JoinColumn(name = "book_id")
     private Book book;
 
+    @NotNull(message = "Пользователь должен быть указан")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @NotNull(message = "Дата возврата должна быть указана")
     private LocalDate returnDate;
 
+    public void setBookId(Long bookId) {
+        this.book = new Book();
+        this.book.setId(bookId);
+    }
 }

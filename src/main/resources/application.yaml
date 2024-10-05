@@ -22,12 +22,12 @@ spring:
     console:
       enabled: true
   freemarker:
-    expose-session-attributes: true
     template-loader-path: classpath:/templates/
     suffix: .ftlh
     charset: UTF-8
-    expose-request-attributes: true
-    expose-spring-macro-helpers: true
+    cache: false
+    enabled: true
+
   jpa:
     hibernate:
       ddl-auto: none

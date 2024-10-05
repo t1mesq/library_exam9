@@ -27,11 +27,14 @@ public class User implements UserDetails {
     private Long id;
 
     @NotBlank(message = "Фамилия не может быть пустым")
+    @Column
     private String surname;
 
     @NotBlank(message = "Имя не может быть пустым")
+    @Column
     private String name;
 
+    @Column
     private String patronymic;
 
     @NotBlank(message = "Адрес не может быть пустым")

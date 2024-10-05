@@ -1,17 +1,19 @@
 package com.attractor.library.controller;
 
+import com.attractor.library.dto.UserDTO;
 import com.attractor.library.entity.User;
 import com.attractor.library.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/users")
 @Validated
 public class UserController {
@@ -30,9 +32,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        User createdUser = userService.saveUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO, @RequestParam String confirmPassword) {
+        try {
+            User createdUser = userService.registerUser(userDTO, confirmPassword);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PutMapping("/{id}")

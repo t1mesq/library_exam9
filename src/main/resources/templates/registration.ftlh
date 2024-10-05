@@ -1,9 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма регистрации</title>
+</head>
+<body>
+<h1>Регистрация</h1>
+
 <form id="registrationForm">
     <label for="surname">Фамилия:</label>
     <input type="text" id="surname" name="surname" required>
 
     <label for="name">Имя:</label>
     <input type="text" id="name" name="name" required>
+
+    <label for="name">Имя:</label>
+    <input type="text" id="name" name="p">
 
     <label for="address">Адрес:</label>
     <input type="text" id="address" name="address" required>
@@ -19,32 +32,5 @@
 
     <button type="submit">Получить читательский билет</button>
 </form>
-
-<script>
-    document.getElementById("registrationForm").onsubmit = async function(event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-        const response = await fetch('/api/auth/register', {
-            method: 'POST',
-            body: JSON.stringify({
-                surname: formData.get('surname'),
-                name: formData.get('name'),
-                address: formData.get('address'),
-                passportNumber: formData.get('passportNumber'),
-                password: formData.get('password'),
-                confirmPassword: formData.get('confirmPassword')
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            alert(`Читательский билет успешно создан! Номер билета: ${result.ticketNumber}`);
-        } else {
-            const error = await response.json();
-            alert(`Ошибка: ${error.message}`);
-        }
-    };
-</script>
+</body>
+</html>
