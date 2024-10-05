@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookRequestService {
@@ -24,8 +25,35 @@ public class BookRequestService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<BookRequest> getAllRequests() {
-        return bookRequestRepository.findAll();
+    public List<BookRequestDTO> getAllRequests() {
+        List<BookRequest> requests = bookRequestRepository.findAll();
+        return requests.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public BookRequestDTO createRequest(BookRequestDTO bookRequestDTO) {
+        BookRequest bookRequest = convertToEntity(bookRequestDTO);
+        BookRequest savedRequest = bookRequestRepository.save(bookRequest);
+        return convertToDTO(savedRequest);
+    }
+
+    private BookRequest convertToEntity(BookRequestDTO bookRequestDTO) {
+        BookRequest bookRequest = new BookRequest();
+        bookRequest.setReaderTicketNumber(bookRequestDTO.getReaderTicketNumber());
+        bookRequest.setReturnDate(bookRequestDTO.getReturnDate());
+        Book book = bookRepository.findById(bookRequestDTO.getBookId()).orElse(null);
+        bookRequest.setBook(book);
+        return bookRequest;
+    }
+
+    private BookRequestDTO convertToDTO(BookRequest bookRequest) {
+        BookRequestDTO dto = new BookRequestDTO();
+        dto.setId(bookRequest.getId());
+        dto.setBookId(bookRequest.getBook().getId());
+        dto.setReaderTicketNumber(bookRequest.getReaderTicketNumber());
+        dto.setReturnDate(bookRequest.getReturnDate());
+        return dto;
     }
 
     public BookRequest saveRequest(BookRequestDTO bookRequestDTO) {

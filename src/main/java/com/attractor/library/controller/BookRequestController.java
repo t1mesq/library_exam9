@@ -1,44 +1,38 @@
 package com.attractor.library.controller;
 
 import com.attractor.library.dto.BookRequestDTO;
-import com.attractor.library.entity.BookRequest;
 import com.attractor.library.service.BookRequestService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/book-requests")
-@Validated
 public class BookRequestController {
+
+    private final BookRequestService bookRequestService;
+
     @Autowired
-    private BookRequestService bookRequestService;
+    public BookRequestController(BookRequestService bookRequestService) {
+        this.bookRequestService = bookRequestService;
+    }
 
     @GetMapping
-    public List<BookRequest> getAllRequests() {
+    public List<BookRequestDTO> getAllRequests() {
         return bookRequestService.getAllRequests();
     }
 
+
     @PostMapping
-    public ResponseEntity<BookRequest> createRequest(@Valid @RequestBody BookRequestDTO bookRequestDTO) {
-        BookRequest bookRequest = new BookRequest();
-        bookRequest.setReaderTicketNumber(bookRequestDTO.getReaderTicketNumber());
-        bookRequest.setBookId(bookRequestDTO.getBookId());
-        bookRequest.setReturnDate(bookRequestDTO.getReturnDate());
-        BookRequest createdRequest = bookRequestService.saveRequest(bookRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdRequest);
+    public BookRequestDTO createRequest(@RequestBody BookRequestDTO bookRequestDTO) {
+        return bookRequestService.createRequest(bookRequestDTO);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookRequest> getRequestById(@PathVariable Long id) {
-        BookRequest request = bookRequestService.getRequestById(id);
-        return ResponseEntity.ok(request);
+    public ResponseEntity<BookRequestDTO> getRequestById(@PathVariable Long id) {
+        BookRequestDTO bookRequestDTO = bookRequestService.getRequestById(id);
+        return bookRequestDTO != null ? ResponseEntity.ok(bookRequestDTO) : ResponseEntity.notFound().build();
     }
-
 }
