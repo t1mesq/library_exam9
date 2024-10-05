@@ -39,14 +39,7 @@ spring:
 
 logging:
   level:
-    root: info
-    org:
-      springframework:
-        security: info
-      hibernate:
-        #        stat: debug
-        type: info
-    sql: info
-    web: info
+    root: INFO
+    com.attractor.library: DEBUG
   file:
-    name: logs/spring.log
+    name: logs/application.log

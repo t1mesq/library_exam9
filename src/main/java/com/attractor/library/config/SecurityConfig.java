@@ -84,12 +84,12 @@ public class SecurityConfig {
                 Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
                 for (GrantedAuthority authority : authorities) {
                     if (authority.getAuthority().equals(USER)) {
-                        response.sendRedirect("/account");
+                        response.sendRedirect("/api/profile");
                         return;
                     }
 
                     if (authority.getAuthority().equals(ADMIN)) {
-                        response.sendRedirect("/admin");
+                        response.sendRedirect("/api/admin");
                         return;
                     }
                 }

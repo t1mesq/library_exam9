@@ -43,18 +43,21 @@ public class AuthController {
 
         userService.registerUser(userDTO, userDTO.getPassword());
         logger.info("User registered successfully: {}", userDTO.getReaderTicketNumber());
-        return "redirect:/registration-success";
+        return "redirect:/auth/registration-success";
+    }
+
+    @GetMapping("/registration-success")
+    public String showRegistrationSuccessPage(Model model) {
+        return "registration-success";
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody UserDTO userDTO) {
-        User user = userService.authenticate(userDTO.getReaderTicketNumber(), userDTO.getPassword());
-        if (user != null) {
-            logger.info("User authenticated successfully: {}", user.getReaderTicketNumber());
-            return ResponseEntity.ok(new AuthResponse("Authentication successful", user.getReaderTicketNumber()));
-        } else {
-            logger.warn("Unauthorized access attempt for reader ticket number: {}", userDTO.getReaderTicketNumber());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Unauthorized", null));
-        }
+    public String login(@RequestParam String readerTicketNumber, @RequestParam String password, Model model) {
+        return "redirect:/api/profile";
+    }
+
+    @GetMapping("/")
+    public String showHomePage(Model model) {
+        return "book-list";
     }
 }

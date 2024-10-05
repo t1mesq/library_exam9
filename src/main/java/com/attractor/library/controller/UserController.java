@@ -16,7 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/users")
+@RequestMapping("/api/")
 @Validated
 public class UserController {
     @Autowired
@@ -59,6 +59,16 @@ public class UserController {
     public String getUserProfile(Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("user", user);
         model.addAttribute("bookRequests", user.getBookRequests());
-        return "profile";
+        return "profile"; // Возвращает имя шаблона для профиля
+    }
+
+    @GetMapping("/admin")
+    public String getAdminPage() {
+        return "admin"; // Возвращает имя шаблона для админки
+    }
+
+    @GetMapping("/home")
+    public String getHomePage() {
+        return "home"; // Возвращает имя шаблона для главной страницы
     }
 }

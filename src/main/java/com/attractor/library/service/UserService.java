@@ -44,11 +44,16 @@ public class UserService {
         user.setAddress(userDTO.getAddress());
         user.setPassportNumber(userDTO.getPassportNumber());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        System.out.println("Сохраняем пользователя: " + user.getName() + " " + user.getSurname());
         userRepository.save(user);
         Authority defaultAuthority = authorityRepository.findByName("USER");
+        if (defaultAuthority == null) {
+            throw new IllegalStateException("Authority 'USER' не найдена в базе данных.");
+        }
         UserAuthority userAuthority = new UserAuthority();
         userAuthority.setUserId(user.getId());
         userAuthority.setAuthorityId(defaultAuthority.getId());
+        System.out.println("Сохраняем права доступа для пользователя с ID: " + user.getId());
         userAuthoritiesRepository.save(userAuthority);
         return user;
     }
@@ -88,9 +93,20 @@ public class UserService {
 
 
     public User authenticate(String readerTicketNumber, String password) {
+        logger.info("Аутентификация пользователя с номером читательского билета: {}", readerTicketNumber);
+
         Optional<User> optionalUser = userRepository.findByReaderTicketNumber(readerTicketNumber);
-        if (optionalUser.isPresent() && passwordEncoder.matches(password, optionalUser.get().getPassword())) {
-            return optionalUser.get();
+
+        if (optionalUser.isPresent()) {
+            logger.info("Пользователь найден: {}", optionalUser.get().getUsername());
+            boolean passwordMatch = passwordEncoder.matches(password, optionalUser.get().getPassword());
+            logger.info("Пароль совпадает: {}", passwordMatch);
+
+            if (passwordMatch) {
+                return optionalUser.get();
+            }
+        } else {
+            logger.warn("Пользователь не найден с номером читательского билета: {}", readerTicketNumber);
         }
 
         return null;
