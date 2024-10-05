@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -25,6 +26,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Transactional
     public User registerUser(UserDTO userDTO, String confirmPassword) {
         if (!userDTO.getPassword().equals(confirmPassword)) {
             throw new IllegalArgumentException("Пароли не совпадают");
@@ -47,6 +49,7 @@ public class UserService {
 
         return savedUser;
     }
+
 
     private String generateReaderTicketNumber() {
         return UUID.randomUUID().toString();

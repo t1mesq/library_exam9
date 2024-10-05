@@ -12,20 +12,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     @Autowired
     private UserService userService;
-
-    private static final    Logger logger = LoggerFactory.getLogger(AuthController.class);
-
-    @GetMapping("/login")
-    public String showLoginForm(Model model) {
-        return "login";
-    }
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -33,30 +29,30 @@ public class AuthController {
         return "registration";
     }
 
-    @PostMapping("/register")
-    public String registerUser(@Valid UserDTO userDTO, @RequestParam String confirmPassword, Model model) {
-        logger.info("Попытка регистрации пользователя: {}", userDTO);
-
-        try {
-            User registeredUser = userService.registerUser(userDTO, confirmPassword);
-            logger.info("Пользователь успешно зарегистрирован: {}", registeredUser);
-            model.addAttribute("successMessage", registeredUser.getReaderTicketNumber());
-            return "registration-success";
-        } catch (IllegalArgumentException e) {
-            logger.error("Ошибка при регистрации пользователя: {}", e.getMessage());
-            model.addAttribute("errorMessage", e.getMessage());
-            return "registration";
-        }
+    @GetMapping("/login")
+    public String showLoginForm(Model model) {
+        return "login";
     }
 
-
+    @PostMapping("/register")
+    public String registerUser(@Valid @ModelAttribute UserDTO userDTO, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("userDTO", userDTO);
+            return "registration";
+        }
+        userService.registerUser(userDTO, userDTO.getPassword());
+        logger.info("User registered successfully: {}", userDTO.getReaderTicketNumber());
+        return "redirect:/registration-success";
+    }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody UserDTO userDTO) {
         User user = userService.authenticate(userDTO.getReaderTicketNumber(), userDTO.getPassword());
         if (user != null) {
+            logger.info("User authenticated successfully: {}", user.getReaderTicketNumber());
             return ResponseEntity.ok(new AuthResponse("Authentication successful", user.getReaderTicketNumber()));
         } else {
+            logger.warn("Unauthorized access attempt for reader ticket number: {}", userDTO.getReaderTicketNumber());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Unauthorized", null));
         }
     }

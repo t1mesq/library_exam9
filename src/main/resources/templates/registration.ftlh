@@ -18,30 +18,30 @@
     <form action="/auth/register" method="POST" class="needs-validation" novalidate>
         <div class="mb-3">
             <label for="surname" class="form-label">Фамилия:</label>
-            <input type="text" class="form-control" id="surname" name="surname" value="${userDTO.surname}" required>
+            <input type="text" class="form-control" id="surname" name="surname" value="${userDTO.surname!''}" required>
             <div class="invalid-feedback">Пожалуйста, введите Фамилию.</div>
         </div>
 
         <div class="mb-3">
             <label for="name" class="form-label">Имя:</label>
-            <input type="text" class="form-control" id="name" name="name" value="${userDTO.name}" required>
+            <input type="text" class="form-control" id="name" name="name" value="${userDTO.name!''}" required>
             <div class="invalid-feedback">Пожалуйста, введите Имя.</div>
         </div>
 
         <div class="mb-3">
             <label for="patronymic" class="form-label">Отчество:</label>
-            <input type="text" class="form-control" id="patronymic" name="patronymic" value="${userDTO.patronymic}">
+            <input type="text" class="form-control" id="patronymic" name="patronymic" value="${userDTO.patronymic!''}">
         </div>
 
         <div class="mb-3">
             <label for="address" class="form-label">Адрес:</label>
-            <input type="text" class="form-control" id="address" name="address" value="${userDTO.address}" required>
+            <input type="text" class="form-control" id="address" name="address" value="${userDTO.address!''}" required>
             <div class="invalid-feedback">Пожалуйста, введите адрес.</div>
         </div>
 
         <div class="mb-3">
             <label for="passportNumber" class="form-label">Номер паспорта:</label>
-            <input type="text" class="form-control" id="passportNumber" name="passportNumber" value="${userDTO.passportNumber}" required>
+            <input type="text" class="form-control" id="passportNumber" name="passportNumber" value="${userDTO.passportNumber!''}" required>
             <div class="invalid-feedback">Пожалуйста, введите номер паспорта.</div>
         </div>
 
@@ -62,5 +62,21 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
 </body>
 </html>
