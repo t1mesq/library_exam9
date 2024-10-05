@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,36 +17,35 @@ import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User registerUser(@Valid UserDTO userDTO, String confirmPassword) {
+    public User registerUser(UserDTO userDTO, String confirmPassword) {
         if (!userDTO.getPassword().equals(confirmPassword)) {
             throw new IllegalArgumentException("Пароли не совпадают");
         }
 
-        if (userRepository.findByPassportNumber(userDTO.getPassportNumber()) != null) {
-            throw new IllegalArgumentException("Номер паспорта уже существует");
-        }
-
-        String readerTicketNumber;
-        do {
-            readerTicketNumber = generateReaderTicketNumber();
-        } while (userRepository.findByReaderTicketNumber(readerTicketNumber) != null);
-
         User user = new User();
         user.setSurname(userDTO.getSurname());
         user.setName(userDTO.getName());
+        user.setPatronymic(userDTO.getPatronymic());
         user.setAddress(userDTO.getAddress());
         user.setPassportNumber(userDTO.getPassportNumber());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setReaderTicketNumber(readerTicketNumber);
-        user.setEnabled(true);
+        user.setReaderTicketNumber(userDTO.getReaderTicketNumber());
 
-        return userRepository.save(user);
+        logger.info("Попытка сохранить пользователя: {}", user);
+
+        User savedUser = userRepository.save(user);
+
+        logger.info("Пользователь успешно сохранен: {}", savedUser);
+
+        return savedUser;
     }
 
     private String generateReaderTicketNumber() {
@@ -65,9 +66,6 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
 
     public User getUserById(Long id) {
         return userRepository.findById(id)

@@ -43,18 +43,18 @@ public class SecurityConfig {
         http
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
+                        .loginPage("/auth/login")
+                        .loginProcessingUrl("/auth/login")
                         .successHandler(successHandler())
-                        .failureUrl("/login?error=true")
+                        .failureUrl("/auth/login?error=true")
                         .permitAll())
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
                         .permitAll())
-                .httpBasic(withDefaults())
                 .csrf(withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/auth/registration").anonymous()
+                        .requestMatchers(HttpMethod.GET, "/auth/register").anonymous()
+                        .requestMatchers(HttpMethod.GET, "/auth/login").anonymous()
                         .requestMatchers("/admin/**").hasAuthority(ADMIN)
                         .anyRequest().authenticated()
                 );
@@ -97,3 +97,4 @@ public class SecurityConfig {
         return resolver;
     }
 }
+
