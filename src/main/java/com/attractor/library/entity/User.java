@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.OneToMany;
-import com.attractor.library.entity.BookRequest;
 
 @Getter
 @Setter
@@ -55,6 +54,7 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String readerTicketNumber;
 
+    @Column(nullable = false)
     private boolean enabled = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -75,6 +75,7 @@ public class User implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public String getUsername() {
         return readerTicketNumber;
@@ -93,5 +94,31 @@ public class User implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void addAuthority(Authority authority) {
+        authorities.add(authority);
+    }
+
+    public void removeAuthority(Authority authority) {
+        authorities.remove(authority);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return id != null && id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

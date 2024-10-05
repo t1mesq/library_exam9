@@ -9,4 +9,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByPassportNumber(String passportNumber);
     Optional<User> findByReaderTicketNumber(String readerTicketNumber);
 
+    boolean existsByPassportNumber(String passportNumber);
 }

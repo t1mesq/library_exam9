@@ -40,6 +40,8 @@ public class UserDTO {
     @NotBlank(message = "Пароль не может быть пустым")
     private String password;
 
+    private String confirmPassword;
+
     private String readerTicketNumber;
 
     private boolean enabled;

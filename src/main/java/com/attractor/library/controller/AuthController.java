@@ -30,13 +30,22 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public String showLoginForm(Model model) {
+    public String showLoginForm(@RequestParam(value = "error", required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", "Неверный читательский билет или пароль.");
+        }
         return "login";
     }
 
     @PostMapping("/register")
     public String registerUser(@Valid @ModelAttribute UserDTO userDTO, BindingResult result, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("userDTO", userDTO);
+            return "registration";
+        }
+
+        if (!userDTO.getPassword().equals(userDTO.getConfirmPassword())) {
+            model.addAttribute("errorMessage", "Пароли не совпадают.");
             model.addAttribute("userDTO", userDTO);
             return "registration";
         }
@@ -49,11 +58,6 @@ public class AuthController {
     @GetMapping("/registration-success")
     public String showRegistrationSuccessPage(Model model) {
         return "registration-success";
-    }
-
-    @PostMapping("/login")
-    public String login(@RequestParam String readerTicketNumber, @RequestParam String password, Model model) {
-        return "redirect:/api/profile";
     }
 
     @GetMapping("/")

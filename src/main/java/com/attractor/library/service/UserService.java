@@ -14,9 +14,8 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,31 +36,27 @@ public class UserService {
     private UserAuthoritiesRepository userAuthoritiesRepository;
 
     public User registerUser(UserDTO userDTO, String password) {
+        if (userRepository.existsByPassportNumber(userDTO.getPassportNumber())) {
+            throw new RuntimeException("Номер паспорта уже существует.");
+        }
+
         User user = new User();
         user.setSurname(userDTO.getSurname());
         user.setName(userDTO.getName());
         user.setPatronymic(userDTO.getPatronymic());
         user.setAddress(userDTO.getAddress());
         user.setPassportNumber(userDTO.getPassportNumber());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        System.out.println("Сохраняем пользователя: " + user.getName() + " " + user.getSurname());
+        user.setReaderTicketNumber(userDTO.getReaderTicketNumber());
+        user.setPassword(passwordEncoder.encode(password));
+        user.setAuthorities(Set.of(authorityRepository.findByName("USER")));
         userRepository.save(user);
-        Authority defaultAuthority = authorityRepository.findByName("USER");
-        if (defaultAuthority == null) {
-            throw new IllegalStateException("Authority 'USER' не найдена в базе данных.");
-        }
-        UserAuthority userAuthority = new UserAuthority();
-        userAuthority.setUserId(user.getId());
-        userAuthority.setAuthorityId(defaultAuthority.getId());
-        System.out.println("Сохраняем права доступа для пользователя с ID: " + user.getId());
-        userAuthoritiesRepository.save(userAuthority);
         return user;
     }
-
 
     private String generateReaderTicketNumber() {
         return UUID.randomUUID().toString();
     }
+
 
     public User findByPassportNumber(String passportNumber) {
         return userRepository.findByPassportNumber(passportNumber)

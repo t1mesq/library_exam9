@@ -1,5 +1,6 @@
 package com.attractor.library.service;
 
+import com.attractor.library.entity.Authority;
 import com.attractor.library.entity.User;
 import com.attractor.library.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,21 +29,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String readerTicketNumber) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepository.findByReaderTicketNumber(readerTicketNumber);
-        User user = optionalUser.orElseThrow(() ->
-                new UsernameNotFoundException("User not found with reader ticket number: " + readerTicketNumber));
+        User user = userRepository.findByReaderTicketNumber(readerTicketNumber)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getReaderTicketNumber(),
                 user.getPassword(),
-                getAuthorities(user)
+                user.getAuthorities()
         );
-    }
-
-    private Collection<? extends GrantedAuthority> getAuthorities(User user) {
-        return user.getAuthorities().stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
-                .collect(Collectors.toList());
     }
 }
 
